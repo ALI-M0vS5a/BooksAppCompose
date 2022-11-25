@@ -1,0 +1,18 @@
+<resources>
+    <string name="app_name">BooksAppCompose</string>
+    <string name="home_page_cover">Home page cover</string>
+    <string name="read_everytime">Read Everytime</string>
+    <string name="buy_and_read_your_favorite">Buy and read you favorite</string>
+    <string name="book_with_best_price">book with best price</string>
+    <string name="get_started">Get Started</string>
+    <string name="home_menu">Home menu</string>
+    <string name="search">Search</string>
+    <string name="recommended">Recommended</string>
+    <string name="see_all">See all</string>
+    <string name="shopping">ShoppingBooks</string>
+    <string name="unknown_error">Unknown Error</string>
+    <string name="Oops_something_went_wrong">Oops something went wrong</string>
+    <string name="please_check_your_connection">Please check your connection</string>
+    <string name="price">$15</string>
+    <string name="add">Add</string>
+</resources>
