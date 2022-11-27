@@ -3,8 +3,10 @@ package com.example.booksappcompose.presentation.home
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.booksappcompose.R
 import com.example.booksappcompose.domain.repository.BooksRepository
 import com.example.booksappcompose.util.Resource
 import com.example.booksappcompose.util.UiEvent
@@ -17,7 +19,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class HomeScreenViewModel @Inject constructor(
-    private val repository: BooksRepository
+    private val repository: BooksRepository,
+    private val savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
     var state by mutableStateOf(HomeScreenState())
@@ -27,18 +30,53 @@ class HomeScreenViewModel @Inject constructor(
 
 
     init {
-        getTop15MostPopularBooks()
+        val shouldFetchFromRemote = savedStateHandle.get<Boolean>("shouldFetchFromRemote")
+        savedStateHandle.get<String>("year")?.let { year ->
+            savedStateHandle.get<String>("month")?.let { month ->
+                getTop15MostPopularBooks(
+                    year = year,
+                    month = month,
+                    fetchFromRemote = shouldFetchFromRemote ?: false
+                )
+            }
+        }
     }
 
-    fun onEvent(event: UiEvent) {
+    fun onEvent(event: HomeScreenEvent) {
+        val year = savedStateHandle.get<String>("year") ?: "2022"
+        val month = savedStateHandle.get<String>("month") ?: "3"
+        when (event) {
+            is HomeScreenEvent.OnYearSelected -> {
+                state = state.copy(yearSelected = event.year)
+            }
+            is HomeScreenEvent.OnMonthSelected -> {
+                state = state.copy(monthSelected = event.month)
+            }
+            is HomeScreenEvent.OnViewBooksButtonClicked -> {
+                viewModelScope.launch {
+                    _eventFlow.emit(UiEvent.Message(UiText.StringResource(R.string.from_sheet)))
+                }
+            }
+            is HomeScreenEvent.SwipeRefresh -> {
+                getTop15MostPopularBooks(
+                    year = year,
+                    month = month,
+                    fetchFromRemote = true
+                )
+            }
+            is HomeScreenEvent.OnSearchClick -> {
 
+            }
+        }
     }
 
     private fun getTop15MostPopularBooks(
-        fetchFromRemote: Boolean = false
+        fetchFromRemote: Boolean,
+        year: String,
+        month: String
     ) {
         viewModelScope.launch {
-            repository.getTop15MostPopularBooks(fetchFromRemote,"2022", "3").collect { result ->
+            repository.getTop15MostPopularBooks(fetchFromRemote, year, month).collect { result ->
                 when (result) {
                     is Resource.Success -> {
                         state = state.copy(

@@ -18,8 +18,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.example.booksappcompose.presentation.components.BottomSheetContent
 import com.example.booksappcompose.presentation.components.NavigationBar
-import com.example.booksappcompose.presentation.home.BottomSheetContent
 import com.example.booksappcompose.ui.theme.BooksAppComposeTheme
 import com.example.booksappcompose.util.Navigation
 import com.example.booksappcompose.util.Screen
@@ -49,7 +49,11 @@ class MainActivity : ComponentActivity() {
                 ) {
                     ModalBottomSheetLayout(
                         sheetState = sheetState,
-                        sheetContent = { BottomSheetContent() },
+                        sheetContent = { BottomSheetContent(
+                            bottomSheetState = sheetState,
+                            scaffoldState = scaffoldState,
+                            navController = navController
+                        ) },
                         sheetShape = RoundedCornerShape(25.dp),
                         sheetBackgroundColor = Color(0xFFE5C69B),
                         modifier = Modifier
@@ -111,3 +115,4 @@ class MainActivity : ComponentActivity() {
         }
     }
 }
+

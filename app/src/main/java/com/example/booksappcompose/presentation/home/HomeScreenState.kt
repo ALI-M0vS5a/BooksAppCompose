@@ -7,5 +7,8 @@ data class HomeScreenState(
     val listOfTop15MostPopularBooks: List<Top15MostPopularBooksItem> = emptyList(),
     val isLoading: Boolean = false,
     val yearSelected: String = "",
-    val monthSelected: String = ""
+    val monthSelected: String = "",
+    val isRefreshing: Boolean = false,
+    val fetchFromRemote: Boolean = false
+
 )

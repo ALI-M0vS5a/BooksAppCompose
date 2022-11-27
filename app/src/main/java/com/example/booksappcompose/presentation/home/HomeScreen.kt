@@ -1,11 +1,15 @@
 package com.example.booksappcompose.presentation.home
 
 import androidx.activity.compose.BackHandler
+import androidx.compose.animation.core.*
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.List
@@ -16,6 +20,8 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
@@ -26,9 +32,13 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
 import com.example.booksappcompose.R
 import com.example.booksappcompose.presentation.home.components.Top15MostPopularBooksItem
+import com.example.booksappcompose.util.Screen
 import com.example.booksappcompose.util.UiEvent
+import com.google.accompanist.swiperefresh.SwipeRefresh
+import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
@@ -37,12 +47,15 @@ import kotlinx.coroutines.launch
 fun HomeScreen(
     viewModel: HomeScreenViewModel = hiltViewModel(),
     scaffoldState: ScaffoldState,
-    sheetState: ModalBottomSheetState
+    sheetState: ModalBottomSheetState,
+    navController: NavController
 ) {
     val state = viewModel.state
     val context = LocalContext.current
 
     val coroutineScope = rememberCoroutineScope()
+
+    val swipeState = rememberSwipeRefreshState(isRefreshing = state.isRefreshing)
 
     LaunchedEffect(key1 = true) {
         viewModel.eventFlow.collectLatest { event ->
@@ -61,38 +74,59 @@ fun HomeScreen(
             sheetState.hide()
         }
     }
+    BackHandler {
+        navController.navigate(Screen.OnBoarding.route)
+    }
 
     Box(modifier = Modifier.fillMaxSize()) {
-        Column(
+        SwipeRefresh(
+            state = swipeState,
+            onRefresh = {
+                viewModel.onEvent(HomeScreenEvent.SwipeRefresh)
+            },
             modifier = Modifier
                 .fillMaxSize()
         ) {
-            Spacer(modifier = Modifier.height(15.dp))
-            TopHomeSection(
+            LazyColumn(
                 modifier = Modifier
-                    .fillMaxWidth(),
-                onClick = {
-                    coroutineScope.launch {
-                        if (sheetState.isVisible) {
-                            sheetState.hide()
-                        } else {
-                            sheetState.show()
+                    .fillMaxSize()
+            ) {
+                item {
+                    Spacer(modifier = Modifier.height(15.dp))
+                    TopHomeSection(
+                        modifier = Modifier
+                            .fillMaxWidth(),
+                        onClick = {
+                            coroutineScope.launch {
+                                if (sheetState.isVisible) {
+                                    sheetState.hide()
+                                } else {
+                                    sheetState.show()
+                                }
+                            }
+                        },
+                        onSearchClick = {
+                            viewModel.onEvent(HomeScreenEvent.OnSearchClick)
                         }
+                    )
+                }
+                item {
+                    Spacer(modifier = Modifier.height(20.dp))
+                    if (viewModel.state.isLoading) {
+                        Box(modifier = Modifier.fillMaxWidth()) {
+                            LoadingAnimatedShimmerEffect(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                            )
+                        }
+                    } else {
+                        SeeAllRecommended(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                        )
                     }
                 }
-            )
-            Spacer(modifier = Modifier.height(20.dp))
-            SeeAllRecommended(
-                modifier = Modifier
-                    .fillMaxWidth()
-            )
-        }
-        if (viewModel.state.isLoading) {
-            CircularProgressIndicator(
-                modifier = Modifier
-                    .align(Alignment.Center),
-                color = Color(0xFFE5C69B)
-            )
+            }
         }
     }
 }
@@ -101,7 +135,8 @@ fun HomeScreen(
 @Composable
 fun TopHomeSection(
     modifier: Modifier = Modifier,
-    onClick: () -> Unit = {}
+    onClick: () -> Unit = {},
+    onSearchClick: () -> Unit = {}
 ) {
     Row(
         modifier = modifier,
@@ -135,7 +170,7 @@ fun TopHomeSection(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Button(
-                onClick = { /*TODO*/ },
+                onClick = { onSearchClick() },
                 colors = ButtonDefaults.buttonColors(
                     backgroundColor = Color.Transparent
                 ),
@@ -200,7 +235,7 @@ fun SeeAllRecommended(
             )
         }
         LazyRow(
-            contentPadding = PaddingValues(start = 10.dp,top = 75.dp)
+            contentPadding = PaddingValues(start = 10.dp, top = 75.dp)
         ) {
             viewModel.state.listOfTop15MostPopularBooks.let { result ->
                 items(result.size) { i ->
@@ -214,19 +249,56 @@ fun SeeAllRecommended(
 }
 
 @Composable
-fun BottomSheetContent(
-    modifier: Modifier = Modifier
+fun BestSeller(
+    modifier: Modifier = Modifier,
+    viewModel: HomeScreenViewModel = hiltViewModel()
 ) {
-    Box(
-        modifier = modifier
-            .fillMaxSize(),
-        contentAlignment = Alignment.Center
-    ) {
-        Text(
-            text = "Bottom Sheet",
-            color = Color.Black,
-            fontSize = 28.sp,
-            fontWeight = FontWeight.Bold
+
+}
+
+@Composable
+fun LoadingAnimatedShimmerEffect(
+    modifier: Modifier = Modifier,
+    viewModel: HomeScreenViewModel = hiltViewModel()
+) {
+    val shimmerColors = listOf(
+        Color.LightGray.copy(alpha = 0.6f),
+        Color.LightGray.copy(alpha = 0.2f),
+        Color.LightGray.copy(alpha = 0.6f)
+    )
+    val transition = rememberInfiniteTransition()
+    val translateAnim = transition.animateFloat(
+        initialValue = 0f,
+        targetValue = 1000f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(
+                durationMillis = 1000,
+                easing = FastOutSlowInEasing
+            )
         )
+    )
+    val brush = Brush.linearGradient(
+        colors = shimmerColors,
+        start = Offset.Zero,
+        end = Offset(x = translateAnim.value, y = translateAnim.value)
+    )
+
+    LazyRow(modifier = modifier, contentPadding = PaddingValues(start = 10.dp, top = 75.dp)) {
+        val size = viewModel.state.listOfTop15MostPopularBooks.size
+        items(size) {
+            Box(
+                modifier = Modifier
+                    .padding(10.dp)
+                    .size(
+                        width = 185.dp,
+                        height = 275.dp
+                    )
+                    .background(
+                        brush = brush,
+                        shape = RoundedCornerShape(25.dp)
+                    )
+            )
+        }
     }
 }
+

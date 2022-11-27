@@ -97,7 +97,7 @@ fun BottomSection(
                     height = 90.dp
                 ),
             onClick = {
-                navController.navigate(Screen.Home.route)
+                navController.navigate(Screen.Home.route+"/2022/3/false")
             }
         )
         Spacer(modifier = Modifier.height(25.dp))
