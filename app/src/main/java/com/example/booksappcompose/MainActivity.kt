@@ -49,11 +49,13 @@ class MainActivity : ComponentActivity() {
                 ) {
                     ModalBottomSheetLayout(
                         sheetState = sheetState,
-                        sheetContent = { BottomSheetContent(
-                            bottomSheetState = sheetState,
-                            scaffoldState = scaffoldState,
-                            navController = navController
-                        ) },
+                        sheetContent = {
+                            BottomSheetContent(
+                                bottomSheetState = sheetState,
+                                scaffoldState = scaffoldState,
+                                navController = navController
+                            )
+                        },
                         sheetShape = RoundedCornerShape(25.dp),
                         sheetBackgroundColor = Color(0xFFE5C69B),
                         modifier = Modifier
@@ -65,11 +67,21 @@ class MainActivity : ComponentActivity() {
                                     if (route != null) {
                                         NavigationBar(route) { target ->
                                             navController.apply {
-                                                navigate(target) {
-                                                    restoreState = true
-                                                    launchSingleTop = true
-                                                    popUpTo(route = Screen.Home.route) {
-                                                        saveState = true
+                                                if (target == Screen.Home.route) {
+                                                    navigate("$target/2022/3/false") {
+                                                        restoreState = true
+                                                        launchSingleTop = true
+                                                        popUpTo(route = Screen.Home.route + "/2022/3/false") {
+                                                            saveState = true
+                                                        }
+                                                    }
+                                                } else {
+                                                    navigate(target) {
+                                                        restoreState = true
+                                                        launchSingleTop = true
+                                                        popUpTo(route = Screen.Home.route + "/2022/3/false") {
+                                                            saveState = true
+                                                        }
                                                     }
                                                 }
                                             }

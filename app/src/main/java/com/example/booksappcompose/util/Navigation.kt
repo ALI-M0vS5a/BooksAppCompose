@@ -38,9 +38,11 @@ fun Navigation(
             arguments = listOf(
                 navArgument(name = "year") {
                     type = NavType.StringType
+                    defaultValue = "2022"
                 },
                 navArgument(name = "month") {
                     type = NavType.StringType
+                    defaultValue = "3"
                 },
                 navArgument(name = "shouldFetchFromRemote") {
                     type = NavType.BoolType

@@ -58,11 +58,11 @@ class HomeScreenViewModel @Inject constructor(
                 }
             }
             is HomeScreenEvent.SwipeRefresh -> {
-                getTop15MostPopularBooks(
-                    year = year,
-                    month = month,
-                    fetchFromRemote = true
-                )
+//                getTop15MostPopularBooks(
+//                    year = year,
+//                    month = month,
+//                    fetchFromRemote = true
+//                )
             }
             is HomeScreenEvent.OnSearchClick -> {
 
