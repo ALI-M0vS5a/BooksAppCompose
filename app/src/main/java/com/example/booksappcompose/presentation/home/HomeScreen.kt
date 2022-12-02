@@ -65,6 +65,9 @@ fun HomeScreen(
                         message = event.uiText.asString(context)
                     )
                 }
+                is UiEvent.OnNavigate -> {
+                    navController.navigate(event.route)
+                }
             }
         }
     }
@@ -106,7 +109,7 @@ fun HomeScreen(
                             }
                         },
                         onSearchClick = {
-                            viewModel.onEvent(HomeScreenEvent.OnSearchClick)
+                            viewModel.onEvent(HomeScreenEvent.OnSearchClick(Screen.Search.route))
                         }
                     )
                 }

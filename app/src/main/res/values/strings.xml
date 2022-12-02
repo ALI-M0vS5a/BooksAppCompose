@@ -6,7 +6,7 @@
     <string name="book_with_best_price">book with best price</string>
     <string name="get_started">Get Started</string>
     <string name="home_menu">Home menu</string>
-    <string name="search">Search</string>
+    <string name="search">Search…</string>
     <string name="recommended">Recommended</string>
     <string name="see_all">See all</string>
     <string name="shopping">ShoppingBooks</string>
@@ -19,4 +19,7 @@
     <string name="enter_month">Enter month..</string>
     <string name="view_books">View Books</string>
     <string name="from_sheet">Botton sheet clicked!!!</string>
+    <string name="empty_list">Empty List</string>
+    <string name="download">Downlaod</string>
+    <string name="more_vert">MoreVertical</string>
 </resources>

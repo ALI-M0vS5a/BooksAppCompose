@@ -15,6 +15,7 @@ import com.example.booksappcompose.presentation.home.HomeScreen
 import com.example.booksappcompose.presentation.notification.NotificationScreen
 import com.example.booksappcompose.presentation.on_boarding.OnBoardingScreen
 import com.example.booksappcompose.presentation.person.PersonScreen
+import com.example.booksappcompose.presentation.search.SearchScreen
 
 @ExperimentalMaterialApi
 @Composable
@@ -61,6 +62,9 @@ fun Navigation(
         }
         composable(route = Screen.Person.route) {
             PersonScreen()
+        }
+        composable(route = Screen.Search.route) {
+            SearchScreen(scaffoldState = scaffoldState)
         }
     }
 }

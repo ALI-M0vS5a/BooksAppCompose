@@ -43,8 +43,6 @@ class HomeScreenViewModel @Inject constructor(
     }
 
     fun onEvent(event: HomeScreenEvent) {
-        val year = savedStateHandle.get<String>("year") ?: "2022"
-        val month = savedStateHandle.get<String>("month") ?: "3"
         when (event) {
             is HomeScreenEvent.OnYearSelected -> {
                 state = state.copy(yearSelected = event.year)
@@ -58,14 +56,12 @@ class HomeScreenViewModel @Inject constructor(
                 }
             }
             is HomeScreenEvent.SwipeRefresh -> {
-//                getTop15MostPopularBooks(
-//                    year = year,
-//                    month = month,
-//                    fetchFromRemote = true
-//                )
+
             }
             is HomeScreenEvent.OnSearchClick -> {
-
+                viewModelScope.launch {
+                    _eventFlow.emit(UiEvent.OnNavigate(event.route))
+                }
             }
         }
     }

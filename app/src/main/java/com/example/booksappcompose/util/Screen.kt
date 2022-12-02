@@ -12,6 +12,7 @@ import com.example.booksappcompose.util.Routes.ROUTE_NOTIFICATION
 import com.example.booksappcompose.util.Routes.ROUTE_NULL
 import com.example.booksappcompose.util.Routes.ROUTE_ON_BOARDING
 import com.example.booksappcompose.util.Routes.ROUTE_PERSON
+import com.example.booksappcompose.util.Routes.ROUTE_SEARCH
 import com.example.booksappcompose.util.Routes.fullScreenRoutes
 
 
@@ -22,9 +23,11 @@ object Routes {
     const val ROUTE_NOTIFICATION = "ROUTE_NOTIFICATION"
     const val ROUTE_PERSON = "ROUTE_PERSON"
     const val ROUTE_NULL = "-"
+    const val ROUTE_SEARCH = "ROUTE_SEARCH"
 
     val fullScreenRoutes = listOf(
-        ROUTE_ON_BOARDING
+        ROUTE_ON_BOARDING,
+        ROUTE_SEARCH
     )
 }
 
@@ -40,6 +43,7 @@ sealed class Screen(
     object Null : Screen(route = ROUTE_NULL)
     object Notification : Screen(route = ROUTE_NOTIFICATION, icon = Icons.Default.Notifications)
     object Person : Screen(route = ROUTE_PERSON, icon = Icons.Default.Person)
+    object Search : Screen(route = ROUTE_SEARCH)
 
     companion object {
         fun isFullScreen(route: String?): Boolean {
