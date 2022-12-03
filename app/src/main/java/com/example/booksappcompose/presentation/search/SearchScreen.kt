@@ -10,9 +10,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.FileDownload
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.SearchOff
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -62,6 +60,9 @@ fun SearchScreen(
             }
         }
     }
+    var bookId by remember {
+        mutableStateOf(0)
+    }
     ModalBottomSheetLayout(
         sheetState = sheetState,
         sheetContent = {
@@ -69,7 +70,15 @@ fun SearchScreen(
                 booksDetail = viewModel.state.bookDetail,
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(25.dp)
+                    .padding(25.dp),
+                onSaveClick = {
+                    if(sheetState.isVisible) {
+                        coroutineScope.launch {
+                            viewModel.onEvent(SearchScreenEvent.OnSaveToLibraryClicked(bookId))
+                            sheetState.hide()
+                        }
+                    }
+                }
             )
         },
         sheetShape = RoundedCornerShape(5.dp),
@@ -103,6 +112,7 @@ fun SearchScreen(
                                         sheetState.hide()
                                     } else {
                                         viewModel.onEvent(SearchScreenEvent.OnMoreClicked(books.book_id))
+                                        bookId = books.book_id
                                         sheetState.show()
                                     }
                                 }
@@ -217,17 +227,21 @@ fun SearchResultItem(
                     overflow = TextOverflow.Ellipsis,
                     maxLines = 2
                 )
-                books.authors.forEachIndexed { _, s ->
-                    Text(
-                        text = "$s,",
-                        color = Color.Gray,
-                        fontSize = 18.sp,
-                        fontWeight = FontWeight.Medium,
-                        overflow = TextOverflow.Ellipsis,
-                        maxLines = 1
-                    )
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                ) {
+                    books.authors.forEachIndexed { _, s ->
+                        Text(
+                            text = "$s, ",
+                            color = Color.Gray,
+                            fontSize = 18.sp,
+                            fontWeight = FontWeight.Medium,
+                            overflow = TextOverflow.Ellipsis,
+                            maxLines = 1
+                        )
+                    }
                 }
-
             }
             Spacer(modifier = Modifier.width(5.dp))
             Row(

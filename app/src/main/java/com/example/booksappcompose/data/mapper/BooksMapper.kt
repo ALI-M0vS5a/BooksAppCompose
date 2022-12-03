@@ -1,5 +1,6 @@
 package com.example.booksappcompose.data.mapper
 
+import com.example.booksappcompose.data.local.BookDetailEntity
 import com.example.booksappcompose.data.local.Top15MostPopularBooksItemEntity
 import com.example.booksappcompose.data.remote.dto.Top15MostPopularDto
 import com.example.booksappcompose.data.remote.dto.Top15MostPopularDtoItem
@@ -65,5 +66,17 @@ fun BooksDetailDto.toBookDetail(): BooksDetail {
         published_date = published_date,
         rating = rating,
         synopsis = synopsis
+    )
+}
+fun BooksDetailDto.toBookDetailEntity(): BookDetailEntity {
+    return BookDetailEntity(
+            authors = authors,
+            book_id = book_id,
+            cover = cover,
+            name = name,
+            pages = pages,
+            published_date = published_date,
+            rating = rating,
+            synopsis = synopsis
     )
 }

@@ -2,10 +2,7 @@ package com.example.booksappcompose.data.repository
 
 import com.example.booksappcompose.R
 import com.example.booksappcompose.data.local.BooksDatabase
-import com.example.booksappcompose.data.mapper.toBookDetail
-import com.example.booksappcompose.data.mapper.toSearchBooksItem
-import com.example.booksappcompose.data.mapper.toTop15MostPopularBooksItem
-import com.example.booksappcompose.data.mapper.toTop15MostPopularBooksItemEntity
+import com.example.booksappcompose.data.mapper.*
 import com.example.booksappcompose.data.remote.BooksApi
 import com.example.booksappcompose.domain.model.Top15MostPopularBooksItem
 import com.example.booksappcompose.domain.model.book_detail.BooksDetail
@@ -113,8 +110,10 @@ class BooksRepositoryImpl(
             }
         }
 
-    override suspend fun getBookDetailById(id: Int): Flow<Resource<BooksDetail>> = flow {
-        emit(Resource.Loading(isLoading = true))
+    override suspend fun getBookDetailById(id: Int, saveToLibrary: Boolean): Flow<Resource<BooksDetail>> = flow {
+        if(!saveToLibrary) {
+            emit(Resource.Loading(isLoading = true))
+        }
         val remote = try {
             api.getBooksDetailById(id = id)
         } catch (e: IOException) {
@@ -137,10 +136,17 @@ class BooksRepositoryImpl(
             null
         }
         remote?.let { booksDetail ->
-            emit(Resource.Success(
-                data = booksDetail.toBookDetail()
-            ))
-            emit(Resource.Loading(false))
+            if(saveToLibrary) {
+                dao.saveBookToLibrary(
+                    bookDetailEntity = booksDetail.toBookDetailEntity()
+                )
+                println("The saved book is ${dao.getBooksInLibrary()}")
+            } else {
+                emit(Resource.Success(
+                    data = booksDetail.toBookDetail()
+                ))
+                emit(Resource.Loading(false))
+            }
         }
     }
 }

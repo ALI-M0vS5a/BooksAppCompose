@@ -22,4 +22,7 @@
     <string name="empty_list">Empty List</string>
     <string name="download">Downlaod</string>
     <string name="more_vert">MoreVertical</string>
+    <string name="delete_from_library">Delete from library</string>
+    <string name="save_to_library">Save to library</string>
+    <string name="saved">Saving…</string>
 </resources>

@@ -5,6 +5,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.booksappcompose.R
 import com.example.booksappcompose.domain.repository.BooksRepository
 import com.example.booksappcompose.util.Resource
 import com.example.booksappcompose.util.UiEvent
@@ -42,7 +43,16 @@ class SearchScreenViewModel @Inject constructor(
             }
             is SearchScreenEvent.OnMoreClicked -> {
                 state = state.copy(bookDetail = null)
-                getBookDetailById(event.id)
+                getBookDetailById(event.id, false)
+            }
+            is SearchScreenEvent.OnSaveToLibraryClicked -> {
+                viewModelScope.launch {
+                    getBookDetailById(event.id, true)
+                    _eventFlow.emit(UiEvent.Message(UiText.StringResource(R.string.saved)))
+                }
+            }
+            is SearchScreenEvent.OnDeleteFromLibraryClicked -> {
+
             }
         }
     }
@@ -63,9 +73,9 @@ class SearchScreenViewModel @Inject constructor(
             }
         }
     }
-    private fun getBookDetailById(id: Int) {
+    private fun getBookDetailById(id: Int, saveToLibrary: Boolean) {
         viewModelScope.launch {
-            repository.getBookDetailById(id).collect { result ->
+            repository.getBookDetailById(id, saveToLibrary).collect { result ->
                 when(result) {
                     is Resource.Loading -> {
                         state = state.copy(isBookDetailLoading = result.isLoading)

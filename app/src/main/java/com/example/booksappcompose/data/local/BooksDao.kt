@@ -18,4 +18,17 @@ interface BooksDao {
     @Query("SELECT * FROM books")
     suspend fun getBooks(): List<Top15MostPopularBooksItemEntity>
 
+    /////////////////////////////////////////////////////////////////////////////////////
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun saveBookToLibrary(
+        bookDetailEntity: BookDetailEntity
+    )
+
+    @Query("DELETE FROM bookDetail")
+    suspend fun clearLibrary()
+
+    @Query("SELECT * FROM bookDetail")
+    suspend fun getBooksInLibrary(): List<BookDetailEntity>
+
 }
