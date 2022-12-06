@@ -69,6 +69,7 @@ object AppModule {
             BooksDatabase::class.java,
             "booksdb.db"
         )
+            .addMigrations(BooksDatabase.migration1To2)
             .build()
     }
 }

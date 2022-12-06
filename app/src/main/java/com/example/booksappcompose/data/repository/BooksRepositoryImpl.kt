@@ -1,11 +1,13 @@
 package com.example.booksappcompose.data.repository
 
 import com.example.booksappcompose.R
+import com.example.booksappcompose.data.local.BookDetailEntity
 import com.example.booksappcompose.data.local.BooksDatabase
-import com.example.booksappcompose.data.mapper.toTop15MostPopularBooksItem
-import com.example.booksappcompose.data.mapper.toTop15MostPopularBooksItemEntity
+import com.example.booksappcompose.data.mapper.*
 import com.example.booksappcompose.data.remote.BooksApi
 import com.example.booksappcompose.domain.model.Top15MostPopularBooksItem
+import com.example.booksappcompose.domain.model.book_detail.BooksDetail
+import com.example.booksappcompose.domain.model.search.SearchBooksItem
 import com.example.booksappcompose.domain.repository.BooksRepository
 import com.example.booksappcompose.util.Resource
 import com.example.booksappcompose.util.UiText
@@ -28,7 +30,7 @@ class BooksRepositoryImpl(
         val localBooks = dao.getBooks()
         val isDbEmpty = localBooks.isEmpty()
         val shouldJustLoadFromCache = !isDbEmpty && !fetchFromRemote
-        if(shouldJustLoadFromCache) {
+        if (shouldJustLoadFromCache) {
             emit(Resource.Loading(isLoading = false))
             emit(Resource.Success(
                 data = localBooks.map { it.toTop15MostPopularBooksItem() }
@@ -63,7 +65,7 @@ class BooksRepositoryImpl(
             null
         }
         remote?.let { top15MostPopularBooks ->
-            dao.clear()
+            dao.clearBooks()
             dao.insertBooks(
                 top15MostPopularBooks.map { it.toTop15MostPopularBooksItemEntity() }
             )
@@ -72,5 +74,87 @@ class BooksRepositoryImpl(
             ))
             emit(Resource.Loading(isLoading = false))
         }
+    }
+
+    override suspend fun searchBooksByName(query: String): Flow<Resource<List<SearchBooksItem>>> =
+        flow {
+            emit(Resource.Loading(isLoading = true))
+            if (query.isEmpty()) {
+                emit(Resource.Loading(isLoading = false))
+            }
+            val remote = try {
+                api.searchBooksByName(query)
+            } catch (e: IOException) {
+                emit(
+                    Resource.Error(
+                        message = UiText.StringResource(
+                            resId = R.string.please_check_your_connection
+                        )
+                    )
+                )
+                null
+            } catch (e: HttpException) {
+                emit(
+                    Resource.Error(
+                        message = (UiText.StringResource(
+                            resId = R.string.Oops_something_went_wrong
+                        ))
+                    )
+                )
+                null
+            }
+            remote?.let { books ->
+                emit(Resource.Success(
+                    data = books.map { it.toSearchBooksItem() }
+                ))
+                emit(Resource.Loading(isLoading = false))
+            }
+        }
+
+    override suspend fun getBookDetailById(id: Int, saveToLibrary: Boolean): Flow<Resource<BooksDetail>> = flow {
+        if(!saveToLibrary) {
+            emit(Resource.Loading(isLoading = true))
+        }
+        val remote = try {
+            api.getBooksDetailById(id = id)
+        } catch (e: IOException) {
+            emit(
+                Resource.Error(
+                    message = UiText.StringResource(
+                        resId = R.string.please_check_your_connection
+                    )
+                )
+            )
+            null
+        } catch (e: HttpException) {
+            emit(
+                Resource.Error(
+                    message = (UiText.StringResource(
+                        resId = R.string.Oops_something_went_wrong
+                    ))
+                )
+            )
+            null
+        }
+        remote?.let { booksDetail ->
+            if(saveToLibrary) {
+                dao.saveBookToLibrary(
+                    bookDetailEntity = booksDetail.toBookDetailEntity()
+                )
+            } else {
+                emit(Resource.Success(
+                    data = booksDetail.toBookDetail()
+                ))
+                emit(Resource.Loading(false))
+            }
+        }
+    }
+
+    override suspend fun isBookAlreadyExistInDb(id: Int): Boolean {
+        return dao.isBookAlreadyExist(id)
+    }
+
+    override suspend fun savedBooks(): List<BookDetailEntity> {
+        return dao.getBooksInLibrary()
     }
 }

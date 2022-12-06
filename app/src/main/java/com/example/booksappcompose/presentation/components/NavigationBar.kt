@@ -17,6 +17,7 @@ import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import com.example.booksappcompose.util.Screen
 
@@ -24,7 +25,7 @@ import com.example.booksappcompose.util.Screen
 @Composable
 fun NavigationBar(
     route: String,
-    onRouteSelected: (targetRoute: String) -> Unit
+    onRouteSelected: (targetRoute: String) -> Unit,
 ) {
     val tabs = remember {
         listOf(
@@ -38,7 +39,8 @@ fun NavigationBar(
 
     BottomNavigation(
         backgroundColor = Color.White,
-        elevation = 0.dp
+        elevation = 0.dp,
+        modifier = Modifier.testTag("BottomBar")
     ) {
         tabs.forEachIndexed { index, screen ->
             val targetRoute = screen.route
@@ -54,7 +56,9 @@ fun NavigationBar(
                     BottomNavigationItem(
                         icon = {},
                         selected = false,
-                        onClick = { /*TODO*/ }
+                        onClick = { /*TODO*/ },
+                        modifier = Modifier
+                            .testTag("Empty route")
                     )
                 }
                 else -> {
@@ -81,6 +85,7 @@ fun NavigationBar(
                                             )
                                         }
                                     }
+                                    .testTag(screen.title)
                             ) {
                                 screen.icon?.let {
                                     Icon(
