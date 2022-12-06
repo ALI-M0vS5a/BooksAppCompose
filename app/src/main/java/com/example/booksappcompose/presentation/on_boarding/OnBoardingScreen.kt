@@ -14,18 +14,17 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavController
 import com.example.booksappcompose.R
-import com.example.booksappcompose.util.Screen
 
 @Composable
 fun OnBoardingScreen(
-    navController: NavController
+    navigateToHomeScreen: () -> Unit
 ) {
     Box(
         modifier = Modifier
@@ -33,6 +32,8 @@ fun OnBoardingScreen(
             .background(
                 color = Color.White
             )
+
+
     ) {
         Column(
             modifier = Modifier
@@ -56,7 +57,7 @@ fun OnBoardingScreen(
             BottomSection(
                 modifier = Modifier
                     .fillMaxWidth(),
-                navController = navController
+                navigateToHomeScreen = navigateToHomeScreen
             )
         }
     }
@@ -65,7 +66,7 @@ fun OnBoardingScreen(
 @Composable
 fun BottomSection(
     modifier: Modifier = Modifier,
-    navController: NavController
+    navigateToHomeScreen: () -> Unit
 ) {
     Column(
         modifier = modifier,
@@ -75,7 +76,9 @@ fun BottomSection(
             text = stringResource(id = R.string.read_everytime),
             fontSize = 37.sp,
             fontWeight = FontWeight.Bold,
-            color = Color.Black
+            color = Color.Black,
+            modifier = Modifier
+                 .testTag("Read Everytime")
         )
         Spacer(modifier = Modifier.height(40.dp))
         Text(
@@ -96,9 +99,7 @@ fun BottomSection(
                     width = 300.dp,
                     height = 90.dp
                 ),
-            onClick = {
-                navController.navigate(Screen.Home.route+"/2022/3/false")
-            }
+            onClick = { navigateToHomeScreen() }
         )
         Spacer(modifier = Modifier.height(25.dp))
     }
@@ -111,7 +112,8 @@ fun GetStartedButton(
 ) {
     OutlinedButton(
         onClick = { onClick() },
-        modifier = modifier,
+        modifier = modifier
+            .testTag("Get Started"),
         shape = RoundedCornerShape(15.dp),
         colors = ButtonDefaults.buttonColors(
             backgroundColor = Color(0xFFE5C69B)

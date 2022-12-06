@@ -1,6 +1,7 @@
 package com.example.booksappcompose.data.repository
 
 import com.example.booksappcompose.R
+import com.example.booksappcompose.data.local.BookDetailEntity
 import com.example.booksappcompose.data.local.BooksDatabase
 import com.example.booksappcompose.data.mapper.*
 import com.example.booksappcompose.data.remote.BooksApi
@@ -64,7 +65,7 @@ class BooksRepositoryImpl(
             null
         }
         remote?.let { top15MostPopularBooks ->
-            dao.clear()
+            dao.clearBooks()
             dao.insertBooks(
                 top15MostPopularBooks.map { it.toTop15MostPopularBooksItemEntity() }
             )
@@ -140,7 +141,6 @@ class BooksRepositoryImpl(
                 dao.saveBookToLibrary(
                     bookDetailEntity = booksDetail.toBookDetailEntity()
                 )
-                println("The saved book is ${dao.getBooksInLibrary()}")
             } else {
                 emit(Resource.Success(
                     data = booksDetail.toBookDetail()
@@ -148,5 +148,13 @@ class BooksRepositoryImpl(
                 emit(Resource.Loading(false))
             }
         }
+    }
+
+    override suspend fun isBookAlreadyExistInDb(id: Int): Boolean {
+        return dao.isBookAlreadyExist(id)
+    }
+
+    override suspend fun savedBooks(): List<BookDetailEntity> {
+        return dao.getBooksInLibrary()
     }
 }

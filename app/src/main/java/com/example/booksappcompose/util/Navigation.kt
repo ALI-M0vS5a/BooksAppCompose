@@ -30,9 +30,9 @@ fun Navigation(
         startDestination = Screen.OnBoarding.route
     ) {
         composable(route = Screen.OnBoarding.route) {
-            OnBoardingScreen(
-                navController = navController
-            )
+            OnBoardingScreen {
+                navController.navigate(Screen.Home.route+"/2022/3/false")
+            }
         }
         composable(
             route = Screen.Home.route+"/{year}/{month}/{shouldFetchFromRemote}",

@@ -26,8 +26,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -39,8 +41,11 @@ import com.example.booksappcompose.util.Screen
 import com.example.booksappcompose.util.UiEvent
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
+import dagger.hilt.android.AndroidEntryPoint
+import dagger.hilt.android.HiltAndroidApp
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+
 
 @ExperimentalMaterialApi
 @Composable
@@ -93,6 +98,7 @@ fun HomeScreen(
             LazyColumn(
                 modifier = Modifier
                     .fillMaxSize()
+                    .testTag("LazyColumn")
             ) {
                 item {
                     Spacer(modifier = Modifier.height(15.dp))
@@ -158,6 +164,7 @@ fun TopHomeSection(
             modifier = Modifier
                 .size(68.dp)
                 .clip(CircleShape)
+                .testTag("Home menu")
         ) {
             Image(
                 imageVector = Icons.Default.List,

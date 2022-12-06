@@ -1,5 +1,6 @@
 package com.example.booksappcompose.domain.repository
 
+import com.example.booksappcompose.data.local.BookDetailEntity
 import com.example.booksappcompose.domain.model.Top15MostPopularBooksItem
 import com.example.booksappcompose.domain.model.book_detail.BooksDetail
 import com.example.booksappcompose.domain.model.search.SearchBooksItem
@@ -16,4 +17,6 @@ interface BooksRepository {
 
     suspend fun searchBooksByName(query: String): Flow<Resource<List<SearchBooksItem>>>
     suspend fun getBookDetailById(id: Int, saveToLibrary: Boolean): Flow<Resource<BooksDetail>>
+    suspend fun isBookAlreadyExistInDb(id: Int): Boolean
+    suspend fun savedBooks(): List<BookDetailEntity>
 }

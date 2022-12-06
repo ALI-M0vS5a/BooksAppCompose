@@ -14,6 +14,7 @@ import androidx.compose.material.icons.outlined.ShoppingCart
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.currentBackStackEntryAsState
@@ -101,6 +102,7 @@ class MainActivity : ComponentActivity() {
                                                 x = 0.dp,
                                                 y = 10.dp
                                             )
+                                            .testTag("Floating action button")
                                     ) {
                                         Icon(
                                             imageVector = Icons.Outlined.ShoppingCart,

@@ -9,5 +9,6 @@ data class SearchScreenState(
     val listOfBooks: List<SearchBooksItem> = emptyList(),
     val isLoading: Boolean = false,
     val bookDetail: BooksDetail? = null,
-    val isBookDetailLoading: Boolean = false
+    val isBookDetailLoading: Boolean = false,
+    val isBookAlreadySaved: Boolean = false
 )

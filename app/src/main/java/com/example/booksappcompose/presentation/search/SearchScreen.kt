@@ -1,5 +1,6 @@
 package com.example.booksappcompose.presentation.search
 
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -56,6 +57,13 @@ fun SearchScreen(
                         message = event.uiText.asString(context)
                     )
                 }
+                is UiEvent.ToastMessage -> {
+                    Toast.makeText(
+                        context,
+                        event.uiText.asString(context),
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
                 else -> Unit
             }
         }
@@ -72,10 +80,12 @@ fun SearchScreen(
                     .fillMaxSize()
                     .padding(25.dp),
                 onSaveClick = {
-                    if(sheetState.isVisible) {
+                    if (sheetState.isVisible) {
                         coroutineScope.launch {
                             viewModel.onEvent(SearchScreenEvent.OnSaveToLibraryClicked(bookId))
-                            sheetState.hide()
+                            if(!viewModel.state.isBookAlreadySaved) {
+                                sheetState.hide()
+                            }
                         }
                     }
                 }
@@ -113,6 +123,7 @@ fun SearchScreen(
                                     } else {
                                         viewModel.onEvent(SearchScreenEvent.OnMoreClicked(books.book_id))
                                         bookId = books.book_id
+                                        viewModel.isBookAlreadySaved(books.book_id)
                                         sheetState.show()
                                     }
                                 }
