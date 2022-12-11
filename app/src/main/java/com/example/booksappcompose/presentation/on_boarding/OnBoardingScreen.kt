@@ -21,6 +21,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.booksappcompose.R
+import com.example.booksappcompose.util.TestTags
 
 @Composable
 fun OnBoardingScreen(
@@ -78,7 +79,7 @@ fun BottomSection(
             fontWeight = FontWeight.Bold,
             color = Color.Black,
             modifier = Modifier
-                 .testTag("Read Everytime")
+                 .testTag(TestTags.READ_EVERYTIME)
         )
         Spacer(modifier = Modifier.height(40.dp))
         Text(
@@ -113,7 +114,7 @@ fun GetStartedButton(
     OutlinedButton(
         onClick = { onClick() },
         modifier = modifier
-            .testTag("Get Started"),
+            .testTag(TestTags.GET_STARTED),
         shape = RoundedCornerShape(15.dp),
         colors = ButtonDefaults.buttonColors(
             backgroundColor = Color(0xFFE5C69B)

@@ -36,7 +36,7 @@ class SearchScreenViewModel @Inject constructor(
                 state = state.copy(onSearch = event.value)
                 searchJob?.cancel()
                 searchJob = viewModelScope.launch {
-                    delay(500L)
+                    delay(1500L)
                     state = state.copy(listOfBooks = emptyList())
                     searchBooksByName(event.value)
                 }
@@ -57,6 +57,11 @@ class SearchScreenViewModel @Inject constructor(
             }
             is SearchScreenEvent.OnDeleteFromLibraryClicked -> {
 
+            }
+            is SearchScreenEvent.OnNavigateUp -> {
+                viewModelScope.launch {
+                    _eventFlow.emit(UiEvent.OnNavigateUp)
+                }
             }
         }
     }

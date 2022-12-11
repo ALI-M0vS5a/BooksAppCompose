@@ -8,6 +8,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.FileDownload
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.SearchOff
@@ -19,6 +20,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -30,6 +32,7 @@ import coil.request.ImageRequest
 import com.example.booksappcompose.R
 import com.example.booksappcompose.domain.model.search.SearchBooksItem
 import com.example.booksappcompose.presentation.search.components.BottomSheetSearchContent
+import com.example.booksappcompose.util.TestTags
 import com.example.booksappcompose.util.UiEvent
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -39,7 +42,8 @@ import kotlinx.coroutines.launch
 @Composable
 fun SearchScreen(
     viewModel: SearchScreenViewModel = hiltViewModel(),
-    scaffoldState: ScaffoldState
+    scaffoldState: ScaffoldState,
+    onNavigateUp: () -> Unit
 ) {
     val context = LocalContext.current
     val sheetState = rememberModalBottomSheetState(
@@ -64,6 +68,7 @@ fun SearchScreen(
                         Toast.LENGTH_SHORT
                     ).show()
                 }
+                is UiEvent.OnNavigateUp -> onNavigateUp()
                 else -> Unit
             }
         }
@@ -83,25 +88,28 @@ fun SearchScreen(
                     if (sheetState.isVisible) {
                         coroutineScope.launch {
                             viewModel.onEvent(SearchScreenEvent.OnSaveToLibraryClicked(bookId))
-                            if(!viewModel.state.isBookAlreadySaved) {
+                            if (!viewModel.state.isBookAlreadySaved) {
                                 sheetState.hide()
                             }
                         }
                     }
-                }
+                },
+                onSaveTestTag = TestTags.SAVE_BOOK
             )
         },
         sheetShape = RoundedCornerShape(5.dp),
         sheetBackgroundColor = Color(0xFFE5C69B),
         modifier = Modifier
             .fillMaxSize()
+            .testTag(TestTags.MODAL_BOTTOM_SHEET)
     ) {
         Box(modifier = Modifier.fillMaxSize()) {
             Column(modifier = Modifier.fillMaxSize()) {
                 SearchBox(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(15.dp)
+                        .padding(top = 15.dp, end = 15.dp),
+                    testTag = TestTags.SEARCH_TEXT_FIELD
                 )
                 LazyColumn(
                     modifier = Modifier
@@ -115,7 +123,18 @@ fun SearchScreen(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .padding(10.dp),
-                            onItemClick = {},
+                            onItemClick = {
+                                coroutineScope.launch {
+                                    if (sheetState.isVisible) {
+                                        sheetState.hide()
+                                    } else {
+                                        viewModel.onEvent(SearchScreenEvent.OnMoreClicked(books.book_id))
+                                        bookId = books.book_id
+                                        viewModel.isBookAlreadySaved(books.book_id)
+                                        sheetState.show()
+                                    }
+                                }
+                            },
                             onMoreClick = {
                                 coroutineScope.launch {
                                     if (sheetState.isVisible) {
@@ -127,7 +146,9 @@ fun SearchScreen(
                                         sheetState.show()
                                     }
                                 }
-                            }
+                            },
+                            testTag = TestTags.SEARCH_ITEM
+
                         )
                     }
                 }
@@ -158,29 +179,48 @@ fun SearchScreen(
 fun SearchBox(
     modifier: Modifier = Modifier,
     viewModel: SearchScreenViewModel = hiltViewModel(),
-    color: Color = Color(0xFFE5C69B)
+    color: Color = Color(0xFFE5C69B),
+    testTag: String = ""
 ) {
     val state = viewModel.state
-    OutlinedTextField(
-        value = state.onSearch,
-        onValueChange = {
-            viewModel.onEvent(SearchScreenEvent.OnSearchValueChanged(it))
-        },
+    Row(
         modifier = modifier,
-        placeholder = {
-            Text(
-                text = stringResource(id = R.string.search),
-                fontSize = 14.sp,
-                color = Color.Gray,
-                fontWeight = FontWeight.Light
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        IconButton(
+            onClick = {
+                viewModel.onEvent(SearchScreenEvent.OnNavigateUp)
+            }
+        ) {
+            Icon(
+                imageVector = Icons.Default.ArrowBack,
+                contentDescription = stringResource(id = R.string.arrow_back),
+                tint = Color.Gray
             )
-        },
-        colors = TextFieldDefaults.outlinedTextFieldColors(
-            cursorColor = color,
-            focusedBorderColor = Color(0xFFB74F18),
-            unfocusedBorderColor = color
+        }
+        OutlinedTextField(
+            value = state.onSearch,
+            onValueChange = {
+                viewModel.onEvent(SearchScreenEvent.OnSearchValueChanged(it))
+            },
+            modifier = Modifier
+                .fillMaxWidth()
+                .testTag(testTag),
+            placeholder = {
+                Text(
+                    text = stringResource(id = R.string.search),
+                    fontSize = 14.sp,
+                    color = Color.Gray,
+                    fontWeight = FontWeight.Light
+                )
+            },
+            colors = TextFieldDefaults.outlinedTextFieldColors(
+                cursorColor = color,
+                focusedBorderColor = Color(0xFFB74F18),
+                unfocusedBorderColor = color
+            )
         )
-    )
+    }
 }
 
 
@@ -191,12 +231,14 @@ fun SearchResultItem(
     books: SearchBooksItem,
     onImageClick: () -> Unit = {},
     onItemClick: () -> Unit = {},
-    onMoreClick: () -> Unit = {}
+    onMoreClick: () -> Unit = {},
+    testTag: String
 ) {
     val context = LocalContext.current
     Box(
         modifier = modifier
             .clickable { onItemClick() }
+            .testTag(testTag)
     ) {
         Row(
             modifier = Modifier

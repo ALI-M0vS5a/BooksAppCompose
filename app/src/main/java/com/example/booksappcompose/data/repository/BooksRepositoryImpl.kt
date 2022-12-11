@@ -154,7 +154,19 @@ class BooksRepositoryImpl(
         return dao.isBookAlreadyExist(id)
     }
 
-    override suspend fun savedBooks(): List<BookDetailEntity> {
+    override  fun savedBooks(): Flow<List<BookDetailEntity>> {
         return dao.getBooksInLibrary()
+    }
+
+    override suspend fun deleteBook(book: BookDetailEntity) {
+        dao.deleteBookFromLibrary(book.book_id)
+    }
+
+    override suspend fun restoreDeletedBook(book: BookDetailEntity) {
+        dao.restoreBookToLibrary(book)
+    }
+
+    override suspend fun saveBooksToLibrary(book: BookDetailEntity) {
+        dao.saveBookToLibrary(book)
     }
 }

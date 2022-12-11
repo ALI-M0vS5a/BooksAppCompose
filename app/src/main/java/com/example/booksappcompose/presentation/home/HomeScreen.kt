@@ -38,6 +38,7 @@ import androidx.navigation.NavController
 import com.example.booksappcompose.R
 import com.example.booksappcompose.presentation.home.components.Top15MostPopularBooksItem
 import com.example.booksappcompose.util.Screen
+import com.example.booksappcompose.util.TestTags
 import com.example.booksappcompose.util.UiEvent
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
@@ -164,7 +165,7 @@ fun TopHomeSection(
             modifier = Modifier
                 .size(68.dp)
                 .clip(CircleShape)
-                .testTag("Home menu")
+                .testTag(TestTags.HOME_MENU)
         ) {
             Image(
                 imageVector = Icons.Default.List,
@@ -203,7 +204,7 @@ fun TopHomeSection(
             Spacer(modifier = Modifier.width(1.dp))
             Image(
                 painter = painterResource(id = R.drawable.home_screen_profile),
-                contentDescription = stringResource(id = R.string.search),
+                contentDescription = stringResource(id = R.string.home_screen_image),
                 modifier = Modifier
                     .clip(CircleShape)
                     .size(40.dp),

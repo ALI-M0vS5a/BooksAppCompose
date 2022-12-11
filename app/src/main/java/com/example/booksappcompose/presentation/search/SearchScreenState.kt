@@ -10,5 +10,5 @@ data class SearchScreenState(
     val isLoading: Boolean = false,
     val bookDetail: BooksDetail? = null,
     val isBookDetailLoading: Boolean = false,
-    val isBookAlreadySaved: Boolean = false
+    val isBookAlreadySaved: Boolean = false,
 )

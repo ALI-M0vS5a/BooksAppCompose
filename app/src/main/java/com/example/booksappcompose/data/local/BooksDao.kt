@@ -4,6 +4,8 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import kotlinx.coroutines.flow.Flow
+
 
 @Dao
 interface BooksDao {
@@ -29,9 +31,17 @@ interface BooksDao {
     suspend fun clearLibrary()
 
     @Query("SELECT * FROM bookDetail")
-    suspend fun getBooksInLibrary(): List<BookDetailEntity>
+    fun getBooksInLibrary(): Flow<List<BookDetailEntity>>
 
     @Query("SELECT EXISTS(SELECT * FROM bookDetail WHERE book_id = :id)")
     suspend fun isBookAlreadyExist(id: Int): Boolean
+
+    @Query("DELETE FROM bookDetail WHERE book_id = :id")
+    suspend fun deleteBookFromLibrary(id: Int)
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun restoreBookToLibrary(
+        bookDetailEntity: BookDetailEntity
+    )
 
 }
