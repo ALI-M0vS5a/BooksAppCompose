@@ -28,4 +28,14 @@
     <string name="this_book_already_saved">Already saved</string>
     <string name="home_screen">Home screen</string>
     <string name="favourites_screen">Favourites screen</string>
+    <string name="title">Title</string>
+    <string name="date">Date</string>
+    <string name="rating">Rating</string>
+    <string name="ascending">Ascending</string>
+    <string name="descending">Descending</string>
+    <string name="your_library">Your library</string>
+    <string name="sort">Sort</string>
+    <string name="unsave">Unsave</string>
+    <string name="arrow_back">Arrow back</string>
+    <string name="home_screen_image">Home image</string>
 </resources>

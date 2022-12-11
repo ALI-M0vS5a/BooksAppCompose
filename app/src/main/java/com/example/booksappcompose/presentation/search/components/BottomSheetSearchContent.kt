@@ -16,6 +16,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -34,7 +35,8 @@ fun BottomSheetSearchContent(
     viewModel: SearchScreenViewModel = hiltViewModel(),
     booksDetail: BooksDetail? = null,
     onSaveClick: () -> Unit = {},
-    onDeleteClick: () -> Unit = {}
+    onDeleteClick: () -> Unit = {},
+    onSaveTestTag: String
 ) {
     val state = viewModel.state
     val context = LocalContext.current
@@ -137,7 +139,8 @@ fun BottomSheetSearchContent(
                 Spacer(modifier = Modifier.height(10.dp))
                 Row(
                     modifier = Modifier
-                        .clickable { onSaveClick() },
+                        .clickable { onSaveClick() }
+                        .testTag(onSaveTestTag),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Icon(

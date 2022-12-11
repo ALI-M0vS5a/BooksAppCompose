@@ -7,6 +7,8 @@ import com.example.booksappcompose.data.local.BooksDatabase
 import com.example.booksappcompose.data.remote.BooksApi
 import com.example.booksappcompose.data.repository.BooksRepositoryImpl
 import com.example.booksappcompose.domain.repository.BooksRepository
+import com.example.booksappcompose.domain.use_cases.BooksUseCases
+import com.example.booksappcompose.domain.use_cases.GetSavedBooks
 import com.facebook.stetho.okhttp3.StethoInterceptor
 import dagger.Module
 import dagger.Provides
@@ -71,5 +73,13 @@ object AppModule {
         )
             .addMigrations(BooksDatabase.migration1To2)
             .build()
+    }
+
+    @Provides
+    @Singleton
+    fun provideBooksUseCases(repository: BooksRepository): BooksUseCases {
+        return BooksUseCases(
+            GetSavedBooks = GetSavedBooks(repository)
+        )
     }
 }

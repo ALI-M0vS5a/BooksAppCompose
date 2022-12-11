@@ -8,6 +8,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.SmallTest
 import com.google.common.truth.Truth.assertThat
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.test.runTest
 import org.junit.After
 import org.junit.Before
@@ -120,9 +121,9 @@ class BooksDaoTest {
         )
         booksDao.saveBookToLibrary(bookDetailEntity)
 
-        val allLibraryBooks = booksDao.getBooksInLibrary()
-
-        assertThat(allLibraryBooks).contains(bookDetailEntity)
+        booksDao.getBooksInLibrary().map {
+            assertThat(it).contains(bookDetailEntity)
+        }
     }
 
     @Test
@@ -143,9 +144,9 @@ class BooksDaoTest {
         booksDao.saveBookToLibrary(bookDetailEntity)
         booksDao.clearLibrary()
 
-        val allLibraryBooks = booksDao.getBooksInLibrary()
-
-        assertThat(allLibraryBooks).doesNotContain(bookDetailEntity)
+        booksDao.getBooksInLibrary().map {
+            assertThat(it).doesNotContain(bookDetailEntity)
+        }
     }
 
     @Test
@@ -168,6 +169,64 @@ class BooksDaoTest {
         val byBookId = booksDao.isBookAlreadyExist(72193)
 
         assertThat(byBookId).isTrue()
+    }
+
+    @Test
+    fun deleteBookFromLibrary() = runTest {
+        val bookDetailEntity = BookDetailEntity(
+            listOf(
+                "J.K. Rowling"
+            ),
+            72193,
+            "https://i.gr-assets.com/images/S/compressed.photo.goodreads.com/books/1170803558l/72193._SX318_SY475_.jpg",
+            "Harry Potter and the Philosopher's Stone (Harry Potter, #1)",
+            223,
+            "published_date",
+            4,
+            "Harry Potter thinks he is an ordinary boy - until he is rescued by an owl, taken to Hogwarts School of Witchcraft and Wizardry, learns to play Quidditch and does battle in a deadly duel. The Reason ... HARRY POTTER IS A ",
+            1
+        )
+        booksDao.saveBookToLibrary(bookDetailEntity)
+
+        booksDao.getBooksInLibrary().map {
+            assertThat(it).contains(bookDetailEntity)
+
+            val deleteBook = booksDao.deleteBookFromLibrary(72193)
+
+            assertThat(it).doesNotContain(deleteBook)
+        }
+
+    }
+
+    @Test
+    fun restoreDeletedBookToLibrary() = runTest {
+        val bookDetailEntity = BookDetailEntity(
+            listOf(
+                "J.K. Rowling"
+            ),
+            72193,
+            "https://i.gr-assets.com/images/S/compressed.photo.goodreads.com/books/1170803558l/72193._SX318_SY475_.jpg",
+            "Harry Potter and the Philosopher's Stone (Harry Potter, #1)",
+            223,
+            "published_date",
+            4,
+            "Harry Potter thinks he is an ordinary boy - until he is rescued by an owl, taken to Hogwarts School of Witchcraft and Wizardry, learns to play Quidditch and does battle in a deadly duel. The Reason ... HARRY POTTER IS A ",
+            1
+        )
+        booksDao.saveBookToLibrary(bookDetailEntity)
+        booksDao.getBooksInLibrary().map {
+            assertThat(it).contains(bookDetailEntity)
+
+            val deleteBook = booksDao.deleteBookFromLibrary(72193)
+            assertThat(it).doesNotContain(deleteBook)
+        }
+
+
+        booksDao.restoreBookToLibrary(bookDetailEntity)
+        booksDao.getBooksInLibrary().map {
+            assertThat(it).contains(bookDetailEntity)
+        }
+
     }
 
 }

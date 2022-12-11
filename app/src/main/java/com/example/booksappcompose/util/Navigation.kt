@@ -54,7 +54,9 @@ fun Navigation(
             HomeScreen(scaffoldState = scaffoldState, sheetState = sheetState, navController = navController)
         }
         composable(route = Screen.Favourites.route) {
-            FavouritesScreen()
+            FavouritesScreen(
+                scaffoldState = scaffoldState
+            )
         }
 
         composable(route = Screen.Notification.route) {
@@ -64,7 +66,12 @@ fun Navigation(
             PersonScreen()
         }
         composable(route = Screen.Search.route) {
-            SearchScreen(scaffoldState = scaffoldState)
+            SearchScreen(
+                scaffoldState = scaffoldState,
+                onNavigateUp = {
+                    navController.navigateUp()
+                }
+            )
         }
     }
 }

@@ -62,7 +62,7 @@ class NavigationTest {
     @Test
     fun clickGetStartedButton_navigateToHomeScreen() {
         composeTestRule
-            .onNodeWithTag("Get Started")
+            .onNodeWithTag(TestTags.GET_STARTED)
             .performClick()
 
         val route = navController.currentBackStackEntry?.destination?.route
