@@ -10,6 +10,7 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import com.example.booksappcompose.presentation.detail.DetailScreen
 import com.example.booksappcompose.presentation.favourites.FavouritesScreen
 import com.example.booksappcompose.presentation.home.HomeScreen
 import com.example.booksappcompose.presentation.notification.NotificationScreen
@@ -31,11 +32,11 @@ fun Navigation(
     ) {
         composable(route = Screen.OnBoarding.route) {
             OnBoardingScreen {
-                navController.navigate(Screen.Home.route+"/2022/3/false")
+                navController.navigate(Screen.Home.route + "/2022/3/false")
             }
         }
         composable(
-            route = Screen.Home.route+"/{year}/{month}/{shouldFetchFromRemote}",
+            route = Screen.Home.route + "/{year}/{month}/{shouldFetchFromRemote}",
             arguments = listOf(
                 navArgument(name = "year") {
                     type = NavType.StringType
@@ -51,11 +52,25 @@ fun Navigation(
                 }
             )
         ) {
-            HomeScreen(scaffoldState = scaffoldState, sheetState = sheetState, navController = navController)
+            HomeScreen(
+                scaffoldState = scaffoldState,
+                sheetState = sheetState,
+                onNavigateToSearchScreen = {
+                    navController.navigate(it)
+                },
+                backHandler = {
+                    navController.navigate(Screen.OnBoarding.route)
+                }
+            )
         }
-        composable(route = Screen.Favourites.route) {
+        composable(
+            route = Screen.Favourites.route
+        ) {
             FavouritesScreen(
-                scaffoldState = scaffoldState
+                scaffoldState = scaffoldState,
+                navigateToDetailScreen = {
+                    navController.navigate(it)
+                }
             )
         }
 
@@ -68,6 +83,20 @@ fun Navigation(
         composable(route = Screen.Search.route) {
             SearchScreen(
                 scaffoldState = scaffoldState,
+                onNavigateUp = {
+                    navController.navigateUp()
+                }
+            )
+        }
+        composable(
+            route = Screen.Detail.route+"/{bookId}",
+            arguments = listOf(
+                navArgument(name = "bookId") {
+                    type = NavType.IntType
+                }
+            )
+        ) {
+            DetailScreen(
                 onNavigateUp = {
                     navController.navigateUp()
                 }

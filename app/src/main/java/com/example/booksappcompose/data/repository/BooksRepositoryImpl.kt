@@ -111,9 +111,19 @@ class BooksRepositoryImpl(
             }
         }
 
-    override suspend fun getBookDetailById(id: Int, saveToLibrary: Boolean): Flow<Resource<BooksDetail>> = flow {
-        if(!saveToLibrary) {
+    override suspend fun getBookDetailById(
+        id: Int,
+        saveToLibrary: Boolean,
+        fromLocal: Boolean
+    ): Flow<Resource<BooksDetail>> = flow {
+        if (!saveToLibrary) {
             emit(Resource.Loading(isLoading = true))
+        }
+        if(fromLocal) {
+            val book = dao.getBookFromLibraryById(id)
+            emit(Resource.Success(
+                data = book.toBookDetail()
+            ))
         }
         val remote = try {
             api.getBooksDetailById(id = id)
@@ -137,14 +147,16 @@ class BooksRepositoryImpl(
             null
         }
         remote?.let { booksDetail ->
-            if(saveToLibrary) {
+            if (saveToLibrary) {
                 dao.saveBookToLibrary(
                     bookDetailEntity = booksDetail.toBookDetailEntity()
                 )
             } else {
-                emit(Resource.Success(
-                    data = booksDetail.toBookDetail()
-                ))
+                emit(
+                    Resource.Success(
+                        data = booksDetail.toBookDetail()
+                    )
+                )
                 emit(Resource.Loading(false))
             }
         }
@@ -154,7 +166,7 @@ class BooksRepositoryImpl(
         return dao.isBookAlreadyExist(id)
     }
 
-    override  fun savedBooks(): Flow<List<BookDetailEntity>> {
+    override fun savedBooks(): Flow<List<BookDetailEntity>> {
         return dao.getBooksInLibrary()
     }
 

@@ -67,6 +67,11 @@ class FavouriteScreenViewModel @Inject constructor(
                     isOrderSectionVisible = !state.isOrderSectionVisible
                 )
             }
+            is FavouritesScreenEvent.OnItemClick -> {
+                viewModelScope.launch {
+                    _eventFlow.emit(UiEvent.OnNavigate(event.route))
+                }
+            }
         }
     }
 

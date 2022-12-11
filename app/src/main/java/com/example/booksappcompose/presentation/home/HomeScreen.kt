@@ -29,12 +29,10 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavController
 import com.example.booksappcompose.R
 import com.example.booksappcompose.presentation.home.components.Top15MostPopularBooksItem
 import com.example.booksappcompose.util.Screen
@@ -42,8 +40,6 @@ import com.example.booksappcompose.util.TestTags
 import com.example.booksappcompose.util.UiEvent
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
-import dagger.hilt.android.AndroidEntryPoint
-import dagger.hilt.android.HiltAndroidApp
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
@@ -54,7 +50,8 @@ fun HomeScreen(
     viewModel: HomeScreenViewModel = hiltViewModel(),
     scaffoldState: ScaffoldState,
     sheetState: ModalBottomSheetState,
-    navController: NavController
+    onNavigateToSearchScreen: (String) -> Unit = {},
+    backHandler: () -> Unit = {}
 ) {
     val state = viewModel.state
     val context = LocalContext.current
@@ -72,8 +69,9 @@ fun HomeScreen(
                     )
                 }
                 is UiEvent.OnNavigate -> {
-                    navController.navigate(event.route)
+                    onNavigateToSearchScreen(event.route)
                 }
+                else -> Unit
             }
         }
     }
@@ -83,9 +81,7 @@ fun HomeScreen(
             sheetState.hide()
         }
     }
-    BackHandler {
-        navController.navigate(Screen.OnBoarding.route)
-    }
+    BackHandler { backHandler() }
 
     Box(modifier = Modifier.fillMaxSize()) {
         SwipeRefresh(

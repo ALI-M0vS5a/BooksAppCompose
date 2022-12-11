@@ -47,7 +47,7 @@ class SearchScreenViewModel @Inject constructor(
             }
             is SearchScreenEvent.OnSaveToLibraryClicked -> {
                 viewModelScope.launch {
-                    if(state.isBookAlreadySaved) {
+                    if (state.isBookAlreadySaved) {
                         _eventFlow.emit(UiEvent.ToastMessage(UiText.StringResource(R.string.this_book_already_saved)))
                     } else {
                         getBookDetailById(event.id, true)
@@ -86,7 +86,11 @@ class SearchScreenViewModel @Inject constructor(
 
     private fun getBookDetailById(id: Int, saveToLibrary: Boolean) {
         viewModelScope.launch {
-            repository.getBookDetailById(id, saveToLibrary).collect { result ->
+            repository.getBookDetailById(
+                id = id,
+                saveToLibrary = saveToLibrary,
+                fromLocal = false
+            ).collect { result ->
                 when (result) {
                     is Resource.Loading -> {
                         state = state.copy(isBookDetailLoading = result.isLoading)

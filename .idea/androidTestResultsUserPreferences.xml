@@ -213,6 +213,20 @@
             </AndroidTestResultsTableState>
           </value>
         </entry>
+        <entry key="23079675">
+          <value>
+            <AndroidTestResultsTableState>
+              <option name="preferredColumnWidths">
+                <map>
+                  <entry key="Duration" value="90" />
+                  <entry key="Tests" value="360" />
+                  <entry key="ZY22CV6PN2" value="120" />
+                  <entry key="motorola&#10; motorola one 5G UW ace" value="120" />
+                </map>
+              </option>
+            </AndroidTestResultsTableState>
+          </value>
+        </entry>
         <entry key="259955218">
           <value>
             <AndroidTestResultsTableState>
