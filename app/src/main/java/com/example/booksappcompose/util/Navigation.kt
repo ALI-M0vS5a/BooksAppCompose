@@ -24,7 +24,8 @@ fun Navigation(
     navController: NavHostController,
     paddingValues: PaddingValues,
     scaffoldState: ScaffoldState,
-    sheetState: ModalBottomSheetState
+    sheetState: ModalBottomSheetState,
+    exit: () -> Unit = {}
 ) {
     NavHost(
         navController = navController,
@@ -58,9 +59,7 @@ fun Navigation(
                 onNavigateToSearchScreen = {
                     navController.navigate(it)
                 },
-                backHandler = {
-                    navController.navigate(Screen.OnBoarding.route)
-                }
+                backHandler = exit
             )
         }
         composable(

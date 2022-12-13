@@ -26,7 +26,10 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
 import com.example.booksappcompose.R
+import com.example.booksappcompose.presentation.detail.components.AuthorsCard
+import com.example.booksappcompose.presentation.detail.components.ExpandableText
 import com.example.booksappcompose.util.UiEvent
+import com.google.accompanist.flowlayout.FlowRow
 import kotlinx.coroutines.flow.collectLatest
 
 @ExperimentalMaterialApi
@@ -119,8 +122,9 @@ fun DetailScreen(
                 modifier = Modifier
                     .offset(y = 90.dp)
                     .fillMaxWidth()
-                    .padding(20.dp)
+                    .padding(start = 20.dp, end = 20.dp, top = 20.dp, bottom = 180.dp)
                     .align(Alignment.TopCenter)
+                    .verticalScroll(rememberScrollState())
             )
             BottomBuyBookSection(
                 modifier = Modifier
@@ -233,6 +237,7 @@ fun BottomBuyBookSection(
     }
 }
 
+@ExperimentalMaterialApi
 @Composable
 fun DetailSection(
     modifier: Modifier = Modifier,
@@ -241,6 +246,7 @@ fun DetailSection(
     var maxLines by remember {
         mutableStateOf(1)
     }
+    val state = viewModel.state
     Column(
         modifier = modifier,
         horizontalAlignment = Alignment.CenterHorizontally
@@ -251,7 +257,7 @@ fun DetailSection(
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Text(
-                text = viewModel.state.bookDetail?.name ?: "",
+                text = state.bookDetail?.name ?: "",
                 color = Color.Black,
                 fontSize = 26.sp,
                 overflow = TextOverflow.Ellipsis,
@@ -290,12 +296,58 @@ fun DetailSection(
             )
             Spacer(modifier = Modifier.width(5.dp))
             Text(
-                text = viewModel.state.bookDetail?.rating.toString(),
+                text = state.bookDetail?.rating.toString(),
                 color = Color(0xFFE5C69B),
                 fontWeight = FontWeight.Bold,
                 fontSize = 18.sp
             )
+            Spacer(modifier = Modifier.width(5.dp))
+            Text(
+                text = stringResource(id = R.string.slash),
+                color = Color.Gray,
+                fontWeight = FontWeight.Bold,
+                fontSize = 18.sp
+            )
+            Spacer(modifier = Modifier.width(5.dp))
+            Text(
+                text = state.bookDetail?.pages.toString() + " pages",
+                color = Color.Gray,
+                fontWeight = FontWeight.Bold,
+                fontSize = 14.sp
+            )
         }
+        Spacer(modifier = Modifier.height(15.dp))
+        FlowRow(
+            modifier = Modifier
+                .fillMaxWidth(),
+            mainAxisSpacing = 5.dp,
+            crossAxisSpacing = 5.dp
+        ) {
+            state.bookDetail?.authors?.forEach { author ->
+                AuthorsCard(
+                    onItemClick = {
+
+                    },
+                    authorsName = author
+                )
+            }
+        }
+        Spacer(modifier = Modifier.height(15.dp))
+        Text(
+            text = stringResource(id = R.string.book_overview),
+            fontWeight = FontWeight.Bold,
+            fontSize = 22.sp,
+            modifier = Modifier
+                .fillMaxWidth()
+        )
+        Spacer(modifier = Modifier.height(15.dp))
+        ExpandableText(
+            text = viewModel.state.bookDetail?.synopsis ?: "",
+            modifier = Modifier
+                .fillMaxWidth(),
+            minimizedMaxLines = 2
+        )
     }
 }
+
 

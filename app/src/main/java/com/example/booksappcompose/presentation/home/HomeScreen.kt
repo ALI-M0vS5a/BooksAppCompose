@@ -256,14 +256,6 @@ fun SeeAllRecommended(
 }
 
 @Composable
-fun BestSeller(
-    modifier: Modifier = Modifier,
-    viewModel: HomeScreenViewModel = hiltViewModel()
-) {
-
-}
-
-@Composable
 fun LoadingAnimatedShimmerEffect(
     modifier: Modifier = Modifier,
     viewModel: HomeScreenViewModel = hiltViewModel()

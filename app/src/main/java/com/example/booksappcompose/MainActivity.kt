@@ -1,6 +1,7 @@
 package com.example.booksappcompose
 
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
@@ -29,6 +30,7 @@ import dagger.hilt.android.AndroidEntryPoint
 @ExperimentalMaterialApi
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
+    private var backPressed = 0L
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
@@ -120,13 +122,27 @@ class MainActivity : ComponentActivity() {
                                 navController = navController,
                                 paddingValues = it,
                                 scaffoldState = scaffoldState,
-                                sheetState = sheetState
+                                sheetState = sheetState,
+                                exit = finish
                             )
                         }
                     }
                 }
             }
         }
+    }
+
+    private val finish: () -> Unit = {
+        if (backPressed + 3000 > System.currentTimeMillis()) {
+            finish()
+        } else {
+            Toast.makeText(
+                this,
+                "Press again to exit",
+                Toast.LENGTH_SHORT
+            ).show()
+        }
+        backPressed = System.currentTimeMillis()
     }
 }
 
