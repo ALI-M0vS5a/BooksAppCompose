@@ -7,6 +7,7 @@ import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.ui.graphics.vector.ImageVector
 import com.example.booksappcompose.R
+import com.example.booksappcompose.util.Routes.ROUTE_DETAIL
 import com.example.booksappcompose.util.Routes.ROUTE_FAVOURITES
 import com.example.booksappcompose.util.Routes.ROUTE_HOME
 import com.example.booksappcompose.util.Routes.ROUTE_NOTIFICATION
@@ -25,11 +26,14 @@ object Routes {
     const val ROUTE_PERSON = "ROUTE_PERSON"
     const val ROUTE_NULL = "-"
     const val ROUTE_SEARCH = "ROUTE_SEARCH"
+    const val ROUTE_DETAIL = "ROUTE_DETAIL"
 
     val fullScreenRoutes = listOf(
         ROUTE_ON_BOARDING,
-        ROUTE_SEARCH
+        ROUTE_SEARCH,
+        "$ROUTE_DETAIL/{bookId}"
     )
+
 }
 
 sealed class Screen(
@@ -45,6 +49,7 @@ sealed class Screen(
     object Notification : Screen(route = ROUTE_NOTIFICATION, icon = Icons.Default.Notifications)
     object Person : Screen(route = ROUTE_PERSON, icon = Icons.Default.Person)
     object Search : Screen(route = ROUTE_SEARCH)
+    object Detail : Screen(route = ROUTE_DETAIL, title = "Detail screen")
 
     companion object {
         fun isFullScreen(route: String?): Boolean {

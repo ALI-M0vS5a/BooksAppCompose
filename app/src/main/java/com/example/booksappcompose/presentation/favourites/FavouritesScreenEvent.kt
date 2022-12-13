@@ -9,4 +9,5 @@ sealed class FavouritesScreenEvent {
     data class DeleteBook(val book: BookDetailEntity): FavouritesScreenEvent()
     object RestoreBook: FavouritesScreenEvent()
     object ToggleOrderSection: FavouritesScreenEvent()
+    data class OnItemClick(val route: String): FavouritesScreenEvent()
 }

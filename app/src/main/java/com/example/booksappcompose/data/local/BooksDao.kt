@@ -44,4 +44,7 @@ interface BooksDao {
         bookDetailEntity: BookDetailEntity
     )
 
+    @Query("SELECT * FROM bookDetail WHERE book_id = :id")
+    suspend fun getBookFromLibraryById(id: Int): BookDetailEntity
+
 }

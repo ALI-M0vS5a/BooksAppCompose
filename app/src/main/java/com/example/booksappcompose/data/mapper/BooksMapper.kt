@@ -80,3 +80,16 @@ fun BooksDetailDto.toBookDetailEntity(): BookDetailEntity {
             synopsis = synopsis
     )
 }
+
+fun BookDetailEntity.toBookDetail(): BooksDetail {
+    return BooksDetail(
+        authors = authors,
+        book_id = book_id,
+        cover = cover,
+        name = name,
+        pages = pages,
+        published_date = published_date,
+        rating = rating,
+        synopsis = synopsis
+    )
+}

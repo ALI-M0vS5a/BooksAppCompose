@@ -229,4 +229,30 @@ class BooksDaoTest {
 
     }
 
+    @Test
+    fun getBookFromLibraryById() = runTest {
+        val bookDetailEntity = BookDetailEntity(
+            listOf(
+                "J.K. Rowling"
+            ),
+            72193,
+            "https://i.gr-assets.com/images/S/compressed.photo.goodreads.com/books/1170803558l/72193._SX318_SY475_.jpg",
+            "Harry Potter and the Philosopher's Stone (Harry Potter, #1)",
+            223,
+            "published_date",
+            4,
+            "Harry Potter thinks he is an ordinary boy - until he is rescued by an owl, taken to Hogwarts School of Witchcraft and Wizardry, learns to play Quidditch and does battle in a deadly duel. The Reason ... HARRY POTTER IS A ",
+            1
+        )
+        booksDao.saveBookToLibrary(bookDetailEntity)
+
+        booksDao.getBooksInLibrary().map {
+            assertThat(it).contains(bookDetailEntity)
+
+            val book = booksDao.getBookFromLibraryById(72193)
+            assertThat(it).contains(book)
+        }
+        val book = booksDao.getBookFromLibraryById(72193)
+        assertThat(bookDetailEntity).isEqualTo(book)
+    }
 }

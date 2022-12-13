@@ -16,7 +16,7 @@ interface BooksRepository {
     ): Flow<Resource<List<Top15MostPopularBooksItem>>>
 
     suspend fun searchBooksByName(query: String): Flow<Resource<List<SearchBooksItem>>>
-    suspend fun getBookDetailById(id: Int, saveToLibrary: Boolean): Flow<Resource<BooksDetail>>
+    suspend fun getBookDetailById(id: Int, saveToLibrary: Boolean, fromLocal: Boolean): Flow<Resource<BooksDetail>>
     suspend fun isBookAlreadyExistInDb(id: Int): Boolean
     fun savedBooks(): Flow<List<BookDetailEntity>>
     suspend fun deleteBook(book: BookDetailEntity)
